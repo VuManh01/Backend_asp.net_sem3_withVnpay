@@ -1,0 +1,6 @@
+@project3api_be_HostAddress = http://localhost:5211
+
+GET {{project3api_be_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

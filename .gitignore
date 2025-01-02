@@ -1,0 +1,64 @@
+# Build files
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and databases
+*.log
+*.ldf
+*.mdf
+
+# Generated files
+*.generated.cs
+*.designer.cs
+*.g.cs
+*.g.i.cs
+*_TemporaryKey.pfx
+
+# NuGet packages
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.pdb
+
+# Rider
+.idea/
+*.sln.iml
+
+# Backup files
+*.bak
+*.swp
+
+# Resharper
+_ReSharper.Caches/
+
+# Mac/Linux
+.DS_Store
+
+# Coverage files
+*.coverage
+*.coveragexml
+*.codecov
+TestResults/
+
+# Secrets
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
