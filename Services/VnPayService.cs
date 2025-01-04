@@ -45,93 +45,179 @@ Console.WriteLine($"Amount: {model.Amount}");
             vnpay.AddRequestData("vnp_TxnRef", tick); // Mã tham chiếu của giao dịch tại hệ 
             //thống của merchant. Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được 
             //trùng lặp trong ngày
-            var paymentUrl = vnpay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSecret"]);
+            var paymentUrl = vnpay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSec    ret"]);
     Console.WriteLine($"Generated Payment URL: {paymentUrl}");
 
             return paymentUrl;
         }
 
-        public async Task<VnPaymentResponseDto> PaymentExecute(IQueryCollection collections)
-        {
-            try 
-            {
-                var vnpay = new VnPayLibrary();
-                        // Log tất cả các parameters nhận được
-                    Console.WriteLine("Received VNPay Parameters:");
-                foreach (var (key, value) in collections)
-                {   
-                    Console.WriteLine($"{key}: {value}");
-                    if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
-                    {
-                        vnpay.AddResponseData(key, value.ToString());
-                    }
-                }
-                // lấy secure hash từ Vnpay response
-                // Kiểm tra xem có nhận được SecureHash không
-                var vnp_SecureHash = collections.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value.ToString();
-                if (string.IsNullOrEmpty(vnp_SecureHash))
-                {
-                    Console.WriteLine("No SecureHash received from VNPay");
-                    return new VnPaymentResponseDto
-                    {
-                    Success = false,
-                    PaymentMethod = "VnPay",
-                    Message = "No SecureHash received"
-                };
-            }
-        Console.WriteLine($"Received SecureHash: {vnp_SecureHash}");
-                // Log HashSecret được sử dụng
-                var hashSecret = _config["VnPay:HashSecret"];
-                    Console.WriteLine($"Used HashSecret: {hashSecret}");
-                bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, _config["VnPay:HashSecret"]);
-                    Console.WriteLine($"Signature validation result: {checkSignature}");
-                if (!checkSignature)
-           return new VnPaymentResponseDto
-           {
-               Success = false,
-               PaymentMethod = "VnPay",
-               Message = "Invalid signature"
-           };
+//         public async Task<VnPaymentResponseDto> PaymentExecute(IQueryCollection collections)
+//         {
+//             try 
+//             {
+//                 var vnpay = new VnPayLibrary();
+// // Log tất cả các parameters nhận được
+// Console.WriteLine("Received VNPay Parameters:");
+//                 foreach (var (key, value) in collections)
+//                 {   
+//                     Console.WriteLine($"{key}: {value}");
+//                     if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+//                     {
+//                         vnpay.AddResponseData(key, value.ToString());
+//                     }
+//                 }
+//                 // lấy secure hash từ Vnpay response
+//                 // Kiểm tra xem có nhận được SecureHash không
+//                 var vnp_SecureHash = collections.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value.ToString();
+//                 if (string.IsNullOrEmpty(vnp_SecureHash))
+//                 {
+//                     Console.WriteLine("No SecureHash received from VNPay");
+//                     return new VnPaymentResponseDto
+//                     {
+//                     Success = false,
+//                     PaymentMethod = "VnPay",
+//                     Message = "No SecureHash received"
+//                 };
+//             }
+
+//         Console.WriteLine($"Received SecureHash: {vnp_SecureHash}");
+//                 // Log HashSecret được sử dụng
+//                 var hashSecret = _config["VnPay:HashSecret"];
+//                 Console.WriteLine($"Used HashSecret: {hashSecret}");
+//                 bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, _config["VnPay:HashSecret"]);
+//                 Console.WriteLine($"Signature validation result: {checkSignature}");
+//                 if (!checkSignature)
+//            return new VnPaymentResponseDto
+//            {
+//                Success = false,
+//                PaymentMethod = "VnPay",
+//                Message = "Invalid signature"
+//            };
 
                 
-                var orderInfo = vnpay.GetResponseData("vnp_OrderInfo");
-                var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
-                var vnp_TransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
-                var vnp_TransactionNo = vnpay.GetResponseData("vnp_TransactionNo");
-                var vnp_TxnRef = vnpay.GetResponseData("vnp_TxnRef");
+//                 var orderInfo = vnpay.GetResponseData("vnp_OrderInfo");
+//                 var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
+//                 var vnp_TransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
+//                 var vnp_TransactionNo = vnpay.GetResponseData("vnp_TransactionNo");
+//                 var vnp_TxnRef = vnpay.GetResponseData("vnp_TxnRef");
 
-                // if (!checkSignature)
-                //     return new VnPaymentResponseDto
-                //     {
-                //         Success = false,
-                //         PaymentMethod = "VnPay",
-                //         Message = "Invalid signature"
-                //     };
+//                 // if (!checkSignature)
+//                 //     return new VnPaymentResponseDto
+//                 //     {
+//                 //         Success = false,
+//                 //         PaymentMethod = "VnPay",
+//                 //         Message = "Invalid signature"
+//                 //     };
 
-                return new VnPaymentResponseDto
-                {
-                    Success = vnp_ResponseCode == "00",
-                    PaymentMethod = "VnPay",
-                    OrderDescription = orderInfo,
-                    OrderId = vnp_TxnRef,
-                    TransactionId = vnp_TransactionNo,
-                    Token = vnp_SecureHash,
-                    VnPayResponseCode = vnp_ResponseCode,
-                    Message = GetResponseMessage(vnp_ResponseCode)
-                };
-            }
-            catch (Exception ex)
-            {   
-                Console.WriteLine($"Error in PaymentExecute: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                return new VnPaymentResponseDto
-                {
-                    Success = false,
-                    PaymentMethod = "VnPay",
-                    Message = ex.Message
-                };
+//                 return new VnPaymentResponseDto
+//                 {
+//                     Success = vnp_ResponseCode == "00",
+//                     PaymentMethod = "VnPay",
+//                     OrderDescription = orderInfo,
+//                     OrderId = vnp_TxnRef,
+//                     TransactionId = vnp_TransactionNo,
+//                     Token = vnp_SecureHash,
+//                     VnPayResponseCode = vnp_ResponseCode,
+//                     Message = GetResponseMessage(vnp_ResponseCode)
+//                 };
+//             }
+//             catch (Exception ex)
+//             {   
+//                 Console.WriteLine($"Error in PaymentExecute: {ex.Message}");
+//                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+//                 return new VnPaymentResponseDto
+//                 {
+//                     Success = false,
+//                     PaymentMethod = "VnPay",
+//                     Message = ex.Message
+//                 };
+//             }
+//         }
+
+
+public async Task<VnPaymentResponseDto> PaymentExecute(IQueryCollection collections)
+{
+    try 
+    {
+        var vnpay = new VnPayLibrary();
+        
+        // Log tất cả các parameters nhận được
+        Console.WriteLine("Received VNPay Parameters:");
+        foreach (var (key, value) in collections)
+        {   
+            Console.WriteLine($"{key}: {value}");
+            if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+            {
+                vnpay.AddResponseData(key, value.ToString());
             }
         }
+
+        // Lấy SecureHash từ VNPay response
+        var vnp_SecureHash = collections.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value.ToString();
+        if (string.IsNullOrEmpty(vnp_SecureHash))
+        {
+            Console.WriteLine("No SecureHash received from VNPay");
+            return new VnPaymentResponseDto
+            {
+                Success = false,
+                PaymentMethod = "VnPay",
+                Message = "No SecureHash received"
+            };
+        }
+
+        Console.WriteLine($"Received SecureHash: {vnp_SecureHash}");
+        
+        // Log HashSecret được sử dụng
+        var hashSecret = _config["VnPay:HashSecret"];
+        Console.WriteLine($"Used HashSecret: {hashSecret}");
+
+        // Kiểm tra chữ ký
+        bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, hashSecret);
+        Console.WriteLine($"Signature validation result: {checkSignature}");
+
+        if (!checkSignature)
+        {
+            return new VnPaymentResponseDto
+            {
+                Success = false,
+                PaymentMethod = "VnPay",
+                Message = "Invalid signature"
+            };
+        }
+
+        // Lấy các thông tin từ phản hồi
+        var orderInfo = vnpay.GetResponseData("vnp_OrderInfo");
+        var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
+        var vnp_TransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
+        var vnp_TransactionNo = vnpay.GetResponseData("vnp_TransactionNo");
+        var vnp_TxnRef = vnpay.GetResponseData("vnp_TxnRef");
+
+        // Trả về kết quả giao dịch
+        return new VnPaymentResponseDto
+        {
+            Success = vnp_ResponseCode == "00", // Kiểm tra giao dịch thành công
+            PaymentMethod = "VnPay",
+            OrderDescription = orderInfo,
+            OrderId = vnp_TxnRef,
+            TransactionId = vnp_TransactionNo,
+            Token = vnp_SecureHash,
+            VnPayResponseCode = vnp_ResponseCode,
+            Message = GetResponseMessage(vnp_ResponseCode)
+        };
+    }
+    catch (Exception ex)
+    {   
+        Console.WriteLine($"Error in PaymentExecute: {ex.Message}");
+        Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+        return new VnPaymentResponseDto
+        {
+            Success = false,
+            PaymentMethod = "VnPay",
+            Message = ex.Message
+        };
+    }
+}
+
 
         private string GetResponseMessage(string responseCode)
         {

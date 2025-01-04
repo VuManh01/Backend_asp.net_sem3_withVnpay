@@ -48,15 +48,28 @@ namespace project3api_be.Helpers
 
             var querystring = data.ToString();
 
-            baseUrl += "?" + querystring;
-            var signData = querystring;
-            if (signData.Length > 0)
-            {
-                signData = signData.Remove(data.Length - 1, 1);
-            }
+            // baseUrl += "?" + querystring;
+            // var signData = querystring;
+            // if (signData.Length > 0)
+            // {
+            //     signData = signData.Remove(data.Length - 1, 1);
+            // }
 
-            var vnpSecureHash = Utils.HmacSHA512(vnpHashSecret, signData);
-            baseUrl += "vnp_SecureHash=" + vnpSecureHash;
+            // var vnpSecureHash = Utils.HmacSHA512(vnpHashSecret, signData);
+            // baseUrl += "vnp_SecureHash=" + vnpSecureHash;
+
+             // Remove the last '&' character
+    if (querystring.Length > 0)
+    {
+        querystring = querystring.Remove(querystring.Length - 1, 1);
+    }
+Console.WriteLine("", querystring);
+    // Sign the data
+    var vnpSecureHash = Utils.HmacSHA512(vnpHashSecret, querystring);
+Console.WriteLine("", vnpSecureHash);
+
+    // Append the SecureHash to the URL
+    baseUrl += "?" + querystring + "&vnp_SecureHash=" + vnpSecureHash;
 
             return baseUrl;
         }

@@ -12,3 +12,10 @@ test Vnpay
   //   "ValidIssuer": "http://localhost:5211",
   //   "SecretKey": "YourSuperSecretKeyWith32Characters"
   // }
+
+{
+  "membershipServiceId": 1,
+  "price": 100000,
+  "fullName": "Nguyễn Văn A",
+  "accountId": 1
+}

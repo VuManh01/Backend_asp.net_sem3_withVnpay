@@ -45,6 +45,7 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Subscription> Subscriptions { get; set; }
 
     public virtual DbSet<Token> Tokens { get; set; }
+    public virtual DbSet<OrderMembership> OrderMembership { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -369,11 +370,7 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.PaymentMemberId).HasName("PRIMARY");
 
             entity.ToTable("payment_members");
-
-            entity.HasIndex(e => e.AccountId, "fk_payment_members_accounts");
-
             entity.Property(e => e.PaymentMemberId).HasColumnName("payment_member_id");
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -383,16 +380,15 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.PaidAt)
                 .HasColumnType("datetime")
                 .HasColumnName("paid_at");
-            entity.Property(e => e.PaymentType)
-                .HasColumnType("enum('Monthly','Yearly')")
-                .HasColumnName("payment_type");
+            // Ánh xạ PaymentType dưới dạng string
+        entity.Property(e => e.PaymentType)
+            .HasColumnType("enum('Monthly', 'Yearly')")
+            .HasColumnName("payment_type");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
 
-            entity.HasOne(d => d.Account).WithMany(p => p.PaymentMembers)
-                .HasForeignKey(d => d.AccountId)
-                .HasConstraintName("fk_payment_members_accounts");
+  
         });
 
         modelBuilder.Entity<Recipe>(entity =>
